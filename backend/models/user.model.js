@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: [true, "Name is required"],
+			trim: true,
 		},
 		email: {
 			type: String,
@@ -13,11 +14,82 @@ const userSchema = new mongoose.Schema(
 			unique: true,
 			lowercase: true,
 			trim: true,
+			index: true,
 		},
 		password: {
 			type: String,
 			required: [true, "Password is required"],
 			minlength: [6, "Password must be at least 6 characters long"],
+		},
+		phone: { type: String, default: "", trim: true },
+		normalizedPhone: {
+			type: String,
+			default: null,
+			sparse: true,
+			index: true,
+		},
+		isEmailVerified: {
+			type: Boolean,
+			default: false,
+			index: true,
+		},
+		accountStatus: {
+			type: String,
+			enum: ["active", "pending_verification", "suspended"],
+			default: "pending_verification",
+			index: true,
+		},
+		authMethod: {
+			type: String,
+			enum: ["email", "google", "both"],
+			default: "email",
+		},
+		googleId: {
+			type: String,
+			default: null,
+			sparse: true,
+			index: true,
+		},
+		avatar: {
+			type: String,
+			default: "",
+		},
+		verificationTokenHash: {
+			type: String,
+			default: null,
+			index: true,
+		},
+		verificationTokenExpiresAt: {
+			type: Date,
+			default: null,
+		},
+		resetPasswordTokenHash: {
+			type: String,
+			default: null,
+			index: true,
+		},
+		resetPasswordExpiresAt: {
+			type: Date,
+			default: null,
+		},
+		lastVerificationEmailSentAt: {
+			type: Date,
+			default: null,
+		},
+		lastPasswordResetEmailSentAt: {
+			type: Date,
+			default: null,
+		},
+		lastLoginAt: {
+			type: Date,
+			default: null,
+		},
+		address: {
+			street: { type: String, default: "" },
+			city: { type: String, default: "" },
+			state: { type: String, default: "" },
+			zipCode: { type: String, default: "" },
+			country: { type: String, default: "" },
 		},
 		cartItems: [
 			{
@@ -29,12 +101,18 @@ const userSchema = new mongoose.Schema(
 					type: mongoose.Schema.Types.ObjectId,
 					ref: "Product",
 				},
+				variantId: { type: String, default: "" },
+				selectedColor: { type: String, default: "" },
+				selectedSize: { type: String, default: "" },
+				sku: { type: String, default: "" },
 			},
 		],
+		wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 		role: {
 			type: String,
 			enum: ["customer", "admin"],
 			default: "customer",
+			index: true,
 		},
 	},
 	{

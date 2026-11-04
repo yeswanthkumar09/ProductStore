@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<linearGradient id="luxe-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%" stopColor="#F5D061" />
+			<stop offset="35%" stopColor="#E6AF2E" />
+			<stop offset="70%" stopColor="#10B981" />
+			<stop offset="100%" stopColor="#059669" />
+		</linearGradient>
+	</defs>
+	<rect x="4" y="4" width="92" height="92" rx="22" fill="#0B0F17" stroke="url(#luxe-gold)" stroke-width="3" />
+	<!-- Diamond Facet Crown -->
+	<polygon points="50,15 62,24 50,32 38,24" fill="url(#luxe-gold)" />
+	<polygon points="50,15 38,24 33,20" fill="#F5D061" opacity="0.8" />
+	<polygon points="50,15 62,24 67,20" fill="#059669" opacity="0.8" />
+	<!-- Interlocking LS -->
+	<path d="M32 34 H40 V66 H66 V74 H32 Z" fill="url(#luxe-gold)" />
+	<path d="M65 42 C65 37 59 34 51 34 C43 34 39 37 39 41 C39 48 67 48 67 60 C67 68 59 74 48 74 C38 74 34 68 34 64 L41 62 C41 65 44 68 49 68 C55 68 60 65 60 60 C60 54 32 53 32 41 C32 32 40 28 50 28 C61 28 66 34 66 41 Z" fill="#FFFFFF" opacity="0.9" />
+</svg>

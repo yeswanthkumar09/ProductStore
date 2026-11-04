@@ -13,6 +13,12 @@ dist-ssr
 *.local
 
 .env
+.env*.local
+
+# Local databases and runtime data
+scratch/
+scratch_prompt.json
+*.sqlite
 
 # Editor directories and files
 .vscode/*

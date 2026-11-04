@@ -23,7 +23,25 @@ const PeopleAlsoBought = () => {
 		fetchRecommendations();
 	}, []);
 
-	if (isLoading) return <LoadingSpinner />;
+	if (isLoading) {
+		return (
+			<div className='mt-8'>
+				<div className='h-6 w-44 bg-neutral-800/80 animate-pulse rounded mb-6' />
+				<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+					{[1, 2, 3].map((n) => (
+						<div
+							key={n}
+							className='bg-neutral-900/60 border border-neutral-800 rounded-xl p-4 animate-pulse space-y-3'
+						>
+							<div className='h-48 bg-neutral-800 rounded-lg' />
+							<div className='h-4 w-3/4 bg-neutral-800 rounded' />
+							<div className='h-4 w-1/3 bg-neutral-800 rounded' />
+						</div>
+					))}
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className='mt-8'>

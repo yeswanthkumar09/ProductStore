@@ -1,24 +1,31 @@
 import { Link } from "react-router-dom";
 
 const CategoryItem = ({ category }) => {
+	const linkPath = category.slug
+		? `/category/${category.slug}`
+		: category.href
+		? category.href.startsWith("/category")
+			? category.href
+			: `/category${category.href.startsWith("/") ? "" : "/"}${category.href}`
+		: "#";
+
 	return (
-		<div className='relative overflow-hidden h-96 w-full rounded-lg group'>
-			<Link to={"/category" + category.href}>
-				<div className='w-full h-full cursor-pointer'>
-					<div className='absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 opacity-50 z-10' />
-					<img
-						src={category.imageUrl}
-						alt={category.name}
-						className='w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110'
-						loading='lazy'
-					/>
-					<div className='absolute bottom-0 left-0 right-0 p-4 z-20'>
-						<h3 className='text-white text-2xl font-bold mb-2'>{category.name}</h3>
-						<p className='text-gray-200 text-sm'>Explore {category.name}</p>
-					</div>
-				</div>
-			</Link>
-		</div>
+		<Link
+			to={linkPath}
+			className='group flex flex-col items-center justify-between p-3 sm:p-4 rounded-sm bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-all select-none'
+		>
+			<h4 className='text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-900 dark:text-neutral-100 mb-4 group-hover:opacity-75 transition-opacity text-center'>
+				{category.name}
+			</h4>
+			<div className='w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 flex items-center justify-center overflow-hidden'>
+				<img
+					src={category.imageUrl || "/jeans.jpg"}
+					alt={category.name}
+					className='max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105'
+					loading='lazy'
+				/>
+			</div>
+		</Link>
 	);
 };
 

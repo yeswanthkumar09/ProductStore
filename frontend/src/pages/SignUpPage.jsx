@@ -1,160 +1,214 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { UserPlus, Mail, Lock, User, ArrowRight, Loader } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { ArrowRight, Loader, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 import { useUserStore } from "../stores/useUserStore";
 
 const SignUpPage = () => {
-	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		password: "",
-		confirmPassword: "",
-	});
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const redirectUrl = searchParams.get("redirect") || "/";
 
-	const { signup, loading } = useUserStore();
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-	const handleSubmit = (e) => {
+	const { signup, loading, user } = useUserStore();
+
+	useEffect(() => {
+		if (user) {
+			navigate(redirectUrl);
+		}
+	}, [user, navigate, redirectUrl]);
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		signup(formData);
+
+		if (password !== confirmPassword) {
+			toast.error("Passwords do not match. Please verify both password fields.");
+			return;
+		}
+
+		if (password.length < 6) {
+			toast.error("Password must be at least 6 characters long.");
+			return;
+		}
+
+		const res = await signup({
+			name: name.trim(),
+			email: email.trim().toLowerCase(),
+			password,
+			confirmPassword,
+		});
+
+		if (res && res.success) {
+			navigate(`/verify-pending?email=${encodeURIComponent(email.trim().toLowerCase())}`);
+		}
 	};
 
 	return (
-		<div className='flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
-			<motion.div
-				className='sm:mx-auto sm:w-full sm:max-w-md'
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.8 }}
-			>
-				<h2 className='mt-6 text-center text-3xl font-extrabold text-emerald-400'>Create your account</h2>
-			</motion.div>
+		<div className='min-h-[calc(100vh-4rem)] w-full bg-neutral-950 flex flex-col md:flex-row text-white'>
+			{/* LEFT 50%: EDITORIAL CAMPAIGN PHOTO */}
+			<div className='relative w-full md:w-1/2 min-h-[300px] md:min-h-full flex flex-col justify-end overflow-hidden select-none bg-neutral-900'>
+				<img
+					src='https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1600&auto=format&fit=crop'
+					alt='LuxeStore Runway Collection'
+					className='absolute inset-0 w-full h-full object-cover object-center filter brightness-90 contrast-105'
+				/>
+				<div className='absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent' />
 
-			<motion.div
-				className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.8, delay: 0.2 }}
-			>
-				<div className='bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-					<form onSubmit={handleSubmit} className='space-y-6'>
+				<div className='relative z-10 p-8 md:p-14 lg:p-16'>
+					<span className='inline-block text-[10px] md:text-xs font-bold tracking-[0.25em] text-neutral-300 uppercase mb-3'>
+						Private Atelier Membership
+					</span>
+					<h1 className='text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase leading-none'>
+						DEFINE YOUR <span className='text-[#e05338]'>SIGNATURE</span>
+					</h1>
+					<p className='mt-3 text-xs md:text-sm text-neutral-300 max-w-md font-normal leading-relaxed'>
+						Join LuxeStore for early drops, curated private capsules, express priority dispatch, and concierge support.
+					</p>
+				</div>
+			</div>
+
+			{/* RIGHT 50%: REGISTRATION FORM */}
+			<div className='w-full md:w-1/2 flex items-center justify-center p-6 sm:p-10 md:p-14 lg:p-20 bg-[#0d0d0f]'>
+				<div className='w-full max-w-md bg-[#131316] border border-neutral-800/80 rounded-2xl p-7 sm:p-9 shadow-2xl relative'>
+					{/* Brand Title */}
+					<div className='text-center mb-8'>
+						<Link to='/' className='inline-block group'>
+							<span className='text-2xl sm:text-3xl font-black tracking-[0.25em] text-white uppercase group-hover:text-[#e05338] transition-colors'>
+								LUXESTORE
+							</span>
+						</Link>
+						<p className='text-[11px] font-semibold tracking-widest text-neutral-400 uppercase mt-1'>
+							Create Your Patron Account
+						</p>
+					</div>
+
+					<form onSubmit={handleSubmit} className='space-y-4'>
 						<div>
-							<label htmlFor='name' className='block text-sm font-medium text-gray-300'>
-								Full name
+							<label className='block text-[11px] font-bold uppercase tracking-widest text-neutral-300 mb-1.5'>
+								Full Name
 							</label>
-							<div className='mt-1 relative rounded-md shadow-sm'>
-								<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-									<User className='h-5 w-5 text-gray-400' aria-hidden='true' />
-								</div>
+							<div className='relative'>
+								<User size={16} className='absolute left-3.5 top-3.5 text-neutral-500' />
 								<input
-									id='name'
 									type='text'
+									value={name}
+									onChange={(e) => setName(e.target.value)}
+									placeholder='Alexander Wright'
 									required
-									value={formData.name}
-									onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-									className='block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 rounded-md shadow-sm
-									 placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
-									placeholder='John Doe'
+									autoFocus
+									className='w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition-colors'
 								/>
 							</div>
 						</div>
 
 						<div>
-							<label htmlFor='email' className='block text-sm font-medium text-gray-300'>
-								Email address
+							<label className='block text-[11px] font-bold uppercase tracking-widest text-neutral-300 mb-1.5'>
+								Email Address
 							</label>
-							<div className='mt-1 relative rounded-md shadow-sm'>
-								<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-									<Mail className='h-5 w-5 text-gray-400' aria-hidden='true' />
-								</div>
+							<div className='relative'>
+								<Mail size={16} className='absolute left-3.5 top-3.5 text-neutral-500' />
 								<input
-									id='email'
 									type='email'
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									placeholder='patron@luxestore.in'
 									required
-									value={formData.email}
-									onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-									className=' block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 
-									rounded-md shadow-sm
-									 placeholder-gray-400 focus:outline-none focus:ring-emerald-500 
-									 focus:border-emerald-500 sm:text-sm'
-									placeholder='you@example.com'
+									className='w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition-colors'
 								/>
 							</div>
 						</div>
 
 						<div>
-							<label htmlFor='password' className='block text-sm font-medium text-gray-300'>
+							<label className='block text-[11px] font-bold uppercase tracking-widest text-neutral-300 mb-1.5'>
 								Password
 							</label>
-							<div className='mt-1 relative rounded-md shadow-sm'>
-								<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-									<Lock className='h-5 w-5 text-gray-400' aria-hidden='true' />
-								</div>
+							<div className='relative'>
+								<Lock size={16} className='absolute left-3.5 top-3.5 text-neutral-500' />
 								<input
-									id='password'
-									type='password'
+									type={showPassword ? "text" : "password"}
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									placeholder='At least 6 characters'
 									required
-									value={formData.password}
-									onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-									className=' block w-full px-3 py-2 pl-10 bg-gray-700 border border-gray-600 
-									rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
-									placeholder='••••••••'
+									minLength={6}
+									className='w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-10 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition-colors'
 								/>
+								<button
+									type='button'
+									onClick={() => setShowPassword(!showPassword)}
+									className='absolute right-3.5 top-3.5 text-neutral-400 hover:text-white transition-colors'
+								>
+									{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+								</button>
 							</div>
 						</div>
 
 						<div>
-							<label htmlFor='confirmPassword' className='block text-sm font-medium text-gray-300'>
+							<label className='block text-[11px] font-bold uppercase tracking-widest text-neutral-300 mb-1.5'>
 								Confirm Password
 							</label>
-							<div className='mt-1 relative rounded-md shadow-sm'>
-								<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-									<Lock className='h-5 w-5 text-gray-400' aria-hidden='true' />
-								</div>
+							<div className='relative'>
+								<Lock size={16} className='absolute left-3.5 top-3.5 text-neutral-500' />
 								<input
-									id='confirmPassword'
-									type='password'
+									type={showConfirmPassword ? "text" : "password"}
+									value={confirmPassword}
+									onChange={(e) => setConfirmPassword(e.target.value)}
+									placeholder='Repeat your password'
 									required
-									value={formData.confirmPassword}
-									onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-									className=' block w-full px-3 py-2 pl-10 bg-gray-700 border
-									 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm'
-									placeholder='••••••••'
+									minLength={6}
+									className='w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-10 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition-colors'
 								/>
+								<button
+									type='button'
+									onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+									className='absolute right-3.5 top-3.5 text-neutral-400 hover:text-white transition-colors'
+								>
+									{showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+								</button>
 							</div>
 						</div>
 
+						{/* Submit CTA */}
 						<button
 							type='submit'
-							className='w-full flex justify-center py-2 px-4 border border-transparent 
-							rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600
-							 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2
-							  focus:ring-emerald-500 transition duration-150 ease-in-out disabled:opacity-50'
 							disabled={loading}
+							className='w-full mt-3 py-3.5 px-6 rounded-lg bg-white hover:bg-neutral-200 text-black font-extrabold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg'
 						>
 							{loading ? (
 								<>
-									<Loader className='mr-2 h-5 w-5 animate-spin' aria-hidden='true' />
-									Loading...
+									<Loader className='animate-spin' size={16} />
+									<span>CREATING ACCOUNT...</span>
 								</>
 							) : (
 								<>
-									<UserPlus className='mr-2 h-5 w-5' aria-hidden='true' />
-									Sign up
+									<span>CREATE ACCOUNT</span>
+									<ArrowRight size={14} />
 								</>
 							)}
 						</button>
 					</form>
 
-					<p className='mt-8 text-center text-sm text-gray-400'>
-						Already have an account?{" "}
-						<Link to='/login' className='font-medium text-emerald-400 hover:text-emerald-300'>
-							Login here <ArrowRight className='inline h-4 w-4' />
-						</Link>
-					</p>
+					<div className='text-center mt-6 pt-4 border-t border-neutral-800/80'>
+						<p className='text-xs text-neutral-400'>
+							Already have an account?{" "}
+							<Link
+								to={`/login${redirectUrl !== "/" ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`}
+								className='text-white font-bold underline hover:text-[#e05338] transition-colors ml-1'
+							>
+								Sign In
+							</Link>
+						</p>
+					</div>
 				</div>
-			</motion.div>
+			</div>
 		</div>
 	);
 };
+
 export default SignUpPage;

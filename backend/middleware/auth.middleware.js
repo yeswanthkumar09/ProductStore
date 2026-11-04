@@ -33,9 +33,31 @@ export const protectRoute = async (req, res, next) => {
 };
 
 export const adminRoute = (req, res, next) => {
-	if (req.user && req.user.role === "admin") {
+	const designatedOwnerEmail = (process.env.OWNER_EMAIL || "yeswanthagathamudi@gmail.com").trim().toLowerCase();
+	
+	if (
+		req.user &&
+		req.user.role === "admin" &&
+		(!process.env.ENFORCE_STRICT_OWNER || req.user.email?.toLowerCase() === designatedOwnerEmail)
+	) {
 		next();
 	} else {
-		return res.status(403).json({ message: "Access denied - Admin only" });
+		console.warn(`[SECURITY ALERT] Unauthorized admin access attempt by: ${req.user?.email || "Anonymous"} (Role: ${req.user?.role || "none"}) on ${req.originalUrl}`);
+		return res.status(403).json({ message: "Access denied - Administrator only" });
 	}
 };
+
+export const optionalAuth = async (req, res, next) => {
+	try {
+		const accessToken = req.cookies.accessToken;
+		if (accessToken) {
+			const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+			const user = await User.findById(decoded.userId).select("-password");
+			if (user) req.user = user;
+		}
+	} catch (error) {
+		// Silently continue for guests
+	}
+	next();
+};
+

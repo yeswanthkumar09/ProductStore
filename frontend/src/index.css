@@ -1,3 +1,980 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root,
+.dark,
+[data-mode="dark"] {
+  /* LUXESTORE Signature Dark Luxury Theme (Default) */
+  --bg-main: #0c0d0e;
+  --bg-surface: #141517;
+  --bg-surface-secondary: #18191c;
+  --bg-card: #141517;
+  --bg-card-secondary: #1a1b1f;
+  --bg-card-hover: #1c1d20;
+  --bg-navbar: rgba(12, 13, 14, 0.95);
+  --bg-modal: #141517;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.85);
+
+  --text-main: #f5f5f5;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+  --text-muted: #71717a;
+  --text-inverse: #0c0d0e;
+
+  --border-color: #262626;
+  --border-main: #262626;
+  --border-subtle: #1c1d20;
+  --border-strong: #3f3f46;
+  --divider: #1f2023;
+
+  --bg-input: #0e0f12;
+  --text-input: #ffffff;
+  --placeholder-input: #52525b;
+  --border-input: #262626;
+
+  --btn-primary-bg: #ffffff;
+  --btn-primary-text: #0c0d0e;
+  --btn-primary-hover: #e5e5e5;
+  --btn-secondary-bg: #18191c;
+  --btn-secondary-text: #f5f5f5;
+  --btn-secondary-border: #262626;
+  --btn-secondary-hover: #222328;
+
+  --primary: #ffffff;
+  --primary-contrast: #0c0d0e;
+  --primary-hover: #e5e5e5;
+  --primary-light: rgba(255, 255, 255, 0.08);
+  --primary-glow: transparent;
+  --accent-amber: #d97706;
+  --accent-amber-light: rgba(217, 119, 6, 0.15);
+  --accent-coral: #ff6b4a;
+}
+
+/* Explicit Light Mode */
+.light,
+[data-mode="light"] {
+  --bg-main: #f8f9fa;
+  --bg-surface: #ffffff;
+  --bg-surface-secondary: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-card-secondary: #f9fafb;
+  --bg-card-hover: #f1f3f5;
+  --bg-navbar: rgba(255, 255, 255, 0.95);
+  --bg-modal: #ffffff;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.6);
+
+  --text-main: #111827;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --text-inverse: #ffffff;
+
+  --border-color: #e5e7eb;
+  --border-main: #e5e7eb;
+  --border-subtle: #f3f4f6;
+  --border-strong: #d1d5db;
+  --divider: #e5e7eb;
+
+  --bg-input: #ffffff;
+  --text-input: #111827;
+  --placeholder-input: #9ca3af;
+  --border-input: #d1d5db;
+
+  --btn-primary-bg: #000000;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #1f2937;
+  --btn-secondary-bg: #ffffff;
+  --btn-secondary-text: #111827;
+  --btn-secondary-border: #d1d5db;
+  --btn-secondary-hover: #e5e7eb;
+
+  --primary: #111827;
+  --primary-contrast: #ffffff;
+  --primary-hover: #1f2937;
+  --primary-light: rgba(17, 24, 39, 0.05);
+  --primary-glow: transparent;
+  --accent-amber: #b45309;
+  --accent-amber-light: rgba(180, 83, 9, 0.1);
+  --accent-coral: #e05338;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Universal Smooth Transitions */
+  a, button, input, select, textarea, [role="button"] {
+    transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  button:active:not(:disabled), [role="button"]:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-main);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+  }
+
+  .light ::-webkit-scrollbar-thumb,
+  [data-mode="light"] ::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+  }
+  .light ::-webkit-scrollbar-thumb:hover,
+  [data-mode="light"] ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+}
+
+/* ==========================================================================
+   LUXESTORE CORE BUTTON SYSTEM
+   Dark: Primary = White bg / Black text, Secondary = Dark bg / White text + border
+   Light: Primary = Black bg / White text, Secondary = White bg / Dark text + border
+   ========================================================================== */
+
+.btn-primary,
+button.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-primary:disabled,
+button.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.dark .btn-primary,
+[data-mode="dark"] .btn-primary {
+  background-color: #ffffff !important;
+  color: #0c0d0e !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+.dark .btn-primary:hover:not(:disabled),
+[data-mode="dark"] .btn-primary:hover:not(:disabled) {
+  background-color: #e5e5e5 !important;
+  border-color: #e5e5e5 !important;
+}
+.light .btn-primary,
+[data-mode="light"] .btn-primary {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border: 1px solid #111827 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.light .btn-primary:hover:not(:disabled),
+[data-mode="light"] .btn-primary:hover:not(:disabled) {
+  background-color: #1f2937 !important;
+  border-color: #1f2937 !important;
+}
+
+/* Secondary Button */
+.btn-secondary,
+button.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-secondary:disabled,
+button.btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.dark .btn-secondary,
+[data-mode="dark"] .btn-secondary {
+  background-color: #141517 !important;
+  color: #ffffff !important;
+  border: 1px solid #262626 !important;
+}
+.dark .btn-secondary:hover:not(:disabled),
+[data-mode="dark"] .btn-secondary:hover:not(:disabled) {
+  background-color: #1f2023 !important;
+  border-color: #383838 !important;
+}
+.light .btn-secondary,
+[data-mode="light"] .btn-secondary {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #e5e7eb !important;
+}
+.light .btn-secondary:hover:not(:disabled),
+[data-mode="light"] .btn-secondary:hover:not(:disabled) {
+  background-color: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+/* Ghost Button */
+.btn-ghost,
+button.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 0.75rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-ghost:disabled,
+button.btn-ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.dark .btn-ghost,
+[data-mode="dark"] .btn-ghost {
+  color: #9ca3af !important;
+}
+.dark .btn-ghost:hover:not(:disabled),
+[data-mode="dark"] .btn-ghost:hover:not(:disabled) {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.light .btn-ghost,
+[data-mode="light"] .btn-ghost {
+  color: #4b5563 !important;
+}
+.light .btn-ghost:hover:not(:disabled),
+[data-mode="light"] .btn-ghost:hover:not(:disabled) {
+  color: #111827 !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Destructive Button */
+.btn-destructive,
+button.btn-destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-destructive:hover:not(:disabled),
+button.btn-destructive:hover:not(:disabled) {
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+.btn-destructive:disabled,
+button.btn-destructive:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   CRITICAL CONTRAST SAFEGUARD FOR .bg-accent & LEGACY BUTTONS
+   Prevents any white-on-white or black-on-black button rendering.
+   ========================================================================== */
+
+.text-accent {
+  color: var(--primary) !important;
+}
+
+.border-accent {
+  border-color: var(--primary) !important;
+}
+
+.bg-accent {
+  background-color: var(--primary) !important;
+  color: var(--primary-contrast) !important;
+}
+
+/* Dark mode: .bg-accent must have black text */
+.dark .bg-accent,
+[data-mode="dark"] .bg-accent,
+.dark .bg-accent.text-white,
+[data-mode="dark"] .bg-accent.text-white,
+.dark button.bg-accent,
+[data-mode="dark"] button.bg-accent {
+  background-color: #ffffff !important;
+  color: #0c0d0e !important;
+}
+
+.dark .bg-accent svg,
+[data-mode="dark"] .bg-accent svg {
+  color: #0c0d0e !important;
+}
+
+/* Light mode: .bg-accent must have white text */
+.light .bg-accent,
+[data-mode="light"] .bg-accent,
+.light .bg-accent.text-white,
+[data-mode="light"] .bg-accent.text-white,
+.light button.bg-accent,
+[data-mode="light"] button.bg-accent {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+
+.light .bg-accent svg,
+[data-mode="light"] .bg-accent svg {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   BUTTON & INTERACTIVE SYSTEM (LIGHT & DARK MODES)
+   Guarantees that primary dark buttons STAY solid black in light mode with
+   crisp white text, and never turn into invisible white-on-white boxes.
+   ========================================================================== */
+
+/* 1. Primary & Active Dark Buttons in Light Mode: Solid Black with Crisp White Text */
+.light button.bg-black,
+[data-mode="light"] button.bg-black,
+.light button.bg-neutral-950,
+[data-mode="light"] button.bg-neutral-950,
+.light button.bg-neutral-900,
+[data-mode="light"] button.bg-neutral-900,
+.light a.bg-black,
+[data-mode="light"] a.bg-black,
+.light a.bg-neutral-950,
+[data-mode="light"] a.bg-neutral-950,
+.light a.bg-neutral-900,
+[data-mode="light"] a.bg-neutral-900,
+.light button.btn-primary,
+[data-mode="light"] button.btn-primary,
+.light a.btn-primary,
+[data-mode="light"] a.btn-primary {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+.light button.bg-black:hover:not(:disabled),
+[data-mode="light"] button.bg-black:hover:not(:disabled),
+.light button.bg-neutral-950:hover:not(:disabled),
+[data-mode="light"] button.bg-neutral-950:hover:not(:disabled),
+.light button.bg-neutral-900:hover:not(:disabled),
+[data-mode="light"] button.bg-neutral-900:hover:not(:disabled),
+.light a.bg-black:hover,
+[data-mode="light"] a.bg-black:hover,
+.light a.bg-neutral-950:hover,
+[data-mode="light"] a.bg-neutral-950:hover,
+.light a.bg-neutral-900:hover,
+[data-mode="light"] a.bg-neutral-900:hover,
+.light button.btn-primary:hover:not(:disabled),
+[data-mode="light"] button.btn-primary:hover:not(:disabled),
+.light a.btn-primary:hover,
+[data-mode="light"] a.btn-primary:hover {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-color: #1f2937 !important;
+}
+
+.light button.bg-black *,
+[data-mode="light"] button.bg-black *,
+.light button.bg-neutral-950 *,
+[data-mode="light"] button.bg-neutral-950 *,
+.light button.bg-neutral-900 *,
+[data-mode="light"] button.bg-neutral-900 *,
+.light a.bg-black *,
+[data-mode="light"] a.bg-black *,
+.light a.bg-neutral-950 *,
+[data-mode="light"] a.bg-neutral-950 *,
+.light a.bg-neutral-900 *,
+[data-mode="light"] a.bg-neutral-900 *,
+.light button.btn-primary *,
+[data-mode="light"] button.btn-primary *,
+.light a.btn-primary *,
+[data-mode="light"] a.btn-primary * {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* 2. Secondary & Inactive Light Buttons in Light Mode */
+.light button.bg-white,
+[data-mode="light"] button.bg-white,
+.light a.bg-white,
+[data-mode="light"] a.bg-white,
+.light button.btn-secondary,
+[data-mode="light"] button.btn-secondary,
+.light a.btn-secondary,
+[data-mode="light"] a.btn-secondary {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #e5e7eb !important;
+}
+
+.light button.bg-white:hover:not(:disabled),
+[data-mode="light"] button.bg-white:hover:not(:disabled),
+.light a.bg-white:hover,
+[data-mode="light"] a.bg-white:hover,
+.light button.btn-secondary:hover:not(:disabled),
+[data-mode="light"] button.btn-secondary:hover:not(:disabled),
+.light a.btn-secondary:hover,
+[data-mode="light"] a.btn-secondary:hover {
+  background-color: #e5e7eb !important;
+  color: #000000 !important;
+  border-color: #9ca3af !important;
+}
+
+.light button.bg-white:not(.admin-nav-tab) *,
+[data-mode="light"] button.bg-white:not(.admin-nav-tab) *,
+.light a.bg-white:not(.admin-nav-tab) *,
+[data-mode="light"] a.bg-white:not(.admin-nav-tab) *,
+.light button.btn-secondary *,
+[data-mode="light"] button.btn-secondary *,
+.light a.btn-secondary *,
+[data-mode="light"] a.btn-secondary * {
+  color: #111827 !important;
+}
+
+.light button.bg-white:not(.admin-nav-tab):hover:not(:disabled) *,
+[data-mode="light"] button.bg-white:not(.admin-nav-tab):hover:not(:disabled) *,
+.light a.bg-white:not(.admin-nav-tab):hover *,
+[data-mode="light"] a.bg-white:not(.admin-nav-tab):hover * {
+  color: #000000 !important;
+}
+
+/* 3. Dark Mode Buttons: Primary is White with Dark Charcoal Text */
+.dark button.bg-white,
+[data-mode="dark"] button.bg-white,
+.dark a.bg-white,
+[data-mode="dark"] a.bg-white,
+.dark button.btn-primary,
+[data-mode="dark"] button.btn-primary,
+.dark a.btn-primary,
+[data-mode="dark"] a.btn-primary {
+  background-color: #ffffff !important;
+  color: #0c0d0e !important;
+  border-color: #ffffff !important;
+}
+
+.dark button.bg-white:hover:not(:disabled),
+[data-mode="dark"] button.bg-white:hover:not(:disabled),
+.dark a.bg-white:hover,
+[data-mode="dark"] a.bg-white:hover,
+.dark button.btn-primary:hover:not(:disabled),
+[data-mode="dark"] button.btn-primary:hover:not(:disabled),
+.dark a.btn-primary:hover,
+[data-mode="dark"] a.btn-primary:hover {
+  background-color: #e5e5e5 !important;
+  color: #0c0d0e !important;
+  border-color: #e5e5e5 !important;
+}
+
+.dark button.bg-white:not(.admin-nav-tab):not(.admin-tab-inactive) *,
+[data-mode="dark"] button.bg-white:not(.admin-nav-tab):not(.admin-tab-inactive) *,
+.dark a.bg-white:not(.admin-nav-tab):not(.admin-tab-inactive) *,
+[data-mode="dark"] a.bg-white:not(.admin-nav-tab):not(.admin-tab-inactive) *,
+.dark button.btn-primary *,
+[data-mode="dark"] button.btn-primary *,
+.dark a.btn-primary *,
+[data-mode="dark"] a.btn-primary * {
+  color: #0c0d0e !important;
+  stroke: #0c0d0e !important;
+}
+
+/* ==========================================================================
+   ADMIN NAVIGATION TABS (.admin-nav-tab)
+   Immediate, smooth 200ms hover & active transitions in both modes.
+   High-specificity rules to guarantee active and inactive contrast.
+   ========================================================================== */
+
+.admin-nav-tab {
+  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 200ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+  will-change: transform, background-color, border-color, box-shadow;
+}
+
+.admin-nav-tab svg,
+.admin-nav-tab span {
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              fill 200ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Light Mode: Inactive tab default */
+.light .admin-nav-tab.admin-tab-inactive,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive {
+  background-color: #ffffff !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+.light .admin-nav-tab.admin-tab-inactive svg,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive svg {
+  color: #4b5563 !important;
+  stroke: #4b5563 !important;
+}
+.light .admin-nav-tab.admin-tab-inactive span,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive span {
+  color: #374151 !important;
+}
+
+/* Light Mode: Inactive tab HOVER - smoothly transitions on mouse enter and out */
+.light .admin-nav-tab.admin-tab-inactive:hover,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive:hover {
+  background-color: #e5e7eb !important;
+  color: #000000 !important;
+  border-color: #9ca3af !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-1px);
+}
+.light .admin-nav-tab.admin-tab-inactive:hover svg,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive:hover svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+.light .admin-nav-tab.admin-tab-inactive:hover span,
+[data-mode="light"] .admin-nav-tab.admin-tab-inactive:hover span {
+  color: #000000 !important;
+}
+
+/* Light Mode: Active tab */
+.light .admin-nav-tab.admin-tab-active,
+[data-mode="light"] .admin-nav-tab.admin-tab-active {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(0);
+}
+.light .admin-nav-tab.admin-tab-active:hover,
+[data-mode="light"] .admin-nav-tab.admin-tab-active:hover {
+  background-color: #262626 !important;
+  color: #ffffff !important;
+  border-color: #404040 !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22) !important;
+  transform: translateY(-1px);
+}
+.light .admin-nav-tab.admin-tab-active svg,
+[data-mode="light"] .admin-nav-tab.admin-tab-active svg,
+.light .admin-nav-tab.admin-tab-active:hover svg,
+[data-mode="light"] .admin-nav-tab.admin-tab-active:hover svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+.light .admin-nav-tab.admin-tab-active span,
+[data-mode="light"] .admin-nav-tab.admin-tab-active span,
+.light .admin-nav-tab.admin-tab-active:hover span,
+[data-mode="light"] .admin-nav-tab.admin-tab-active:hover span {
+  color: #ffffff !important;
+}
+
+/* Dark Mode: Inactive tab default */
+.dark .admin-nav-tab.admin-tab-inactive,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive {
+  background-color: rgba(23, 23, 23, 0.8) !important;
+  color: #d4d4d4 !important;
+  border: 1px solid #262626 !important;
+  transform: translateY(0);
+}
+.dark .admin-nav-tab.admin-tab-inactive svg,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive svg {
+  color: #a3a3a3 !important;
+  stroke: #a3a3a3 !important;
+}
+.dark .admin-nav-tab.admin-tab-inactive span,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive span {
+  color: #d4d4d4 !important;
+}
+
+/* Dark Mode: Inactive tab HOVER */
+.dark .admin-nav-tab.admin-tab-inactive:hover,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive:hover {
+  background-color: #262626 !important;
+  color: #ffffff !important;
+  border-color: #404040 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-1px);
+}
+.dark .admin-nav-tab.admin-tab-inactive:hover svg,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive:hover svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+.dark .admin-nav-tab.admin-tab-inactive:hover span,
+[data-mode="dark"] .admin-nav-tab.admin-tab-inactive:hover span {
+  color: #ffffff !important;
+}
+
+/* Dark Mode: Active tab */
+.dark .admin-nav-tab.admin-tab-active,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active {
+  background-color: #ffffff !important;
+  color: #0a0a0a !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(0);
+}
+.dark .admin-nav-tab.admin-tab-active:hover,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active:hover {
+  background-color: #e5e5e5 !important;
+  color: #0a0a0a !important;
+  border-color: #e5e5e5 !important;
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-1px);
+}
+.dark .admin-nav-tab.admin-tab-active svg,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active svg,
+.dark .admin-nav-tab.admin-tab-active:hover svg,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active:hover svg {
+  color: #0a0a0a !important;
+  stroke: #0a0a0a !important;
+}
+.dark .admin-nav-tab.admin-tab-active span,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active span,
+.dark .admin-nav-tab.admin-tab-active:hover span,
+[data-mode="dark"] .admin-nav-tab.admin-tab-active:hover span {
+  color: #0a0a0a !important;
+}
+
+/* 4. Active & Focus Micro-interactions */
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   GLOBAL LIGHT-MODE ADAPTATION FOR ADMIN DASHBOARD & CARDS
+   Transforms hardcoded dark utility cards and inputs into clean luxury light UI
+   when Light Mode is active, preserving full dark aesthetics in Dark Mode.
+   Excludes buttons, links, span badges, and tabs from background clobbering.
+   ========================================================================== */
+
+.light div.bg-gray-900,
+[data-mode="light"] div.bg-gray-900,
+.light section.bg-gray-900,
+[data-mode="light"] section.bg-gray-900,
+.light main.bg-gray-900,
+[data-mode="light"] main.bg-gray-900,
+.light form.bg-gray-900,
+[data-mode="light"] form.bg-gray-900,
+.light tbody.bg-gray-900,
+[data-mode="light"] tbody.bg-gray-900,
+.light .bg-gray-900:not(button):not(a):not(span):not(svg):not(input),
+[data-mode="light"] .bg-gray-900:not(button):not(a):not(span):not(svg):not(input) {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+.light [class*="bg-gray-900\/"]:not(button):not(a):not(span):not(svg) {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: #e5e7eb !important;
+}
+
+.light div.bg-gray-950,
+[data-mode="light"] div.bg-gray-950,
+.light section.bg-gray-950,
+[data-mode="light"] section.bg-gray-950,
+.light main.bg-gray-950,
+[data-mode="light"] main.bg-gray-950,
+.light form.bg-gray-950,
+[data-mode="light"] form.bg-gray-950,
+.light .bg-gray-950:not(button):not(a):not(span):not(svg):not(input),
+[data-mode="light"] .bg-gray-950:not(button):not(a):not(span):not(svg):not(input),
+.light [class*="bg-gray-950\/"]:not(button):not(a):not(span):not(svg) {
+  background-color: #f9fafb !important;
+  border-color: #e5e7eb !important;
+}
+
+.light .border-gray-800,
+[data-mode="light"] .border-gray-800,
+.light .border-gray-800\/80,
+[data-mode="light"] .border-gray-800\/80,
+.light .border-neutral-800,
+[data-mode="light"] .border-neutral-800 {
+  border-color: #e5e7eb !important;
+}
+
+.light .divide-gray-800 > :not([hidden]) ~ :not([hidden]),
+[data-mode="light"] .divide-gray-800 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e5e7eb !important;
+}
+
+/* Light mode text readability inside cards & sections */
+.light [class*="bg-gray-900"] h1,
+.light [class*="bg-gray-900"] h2,
+.light [class*="bg-gray-900"] h3,
+.light [class*="bg-gray-900"] h4,
+.light [class*="bg-gray-900"] h5,
+.light [class*="bg-gray-950"] h1,
+.light [class*="bg-gray-950"] h2,
+.light [class*="bg-gray-950"] h3,
+.light [class*="bg-gray-950"] h4,
+.light [class*="bg-gray-950"] h5,
+.light .bg-gray-900 h1,
+[data-mode="light"] .bg-gray-900 h1,
+.light .bg-gray-900 h2,
+[data-mode="light"] .bg-gray-900 h2,
+.light .bg-gray-900 h3,
+[data-mode="light"] .bg-gray-900 h3,
+.light .bg-gray-900 h4,
+[data-mode="light"] .bg-gray-900 h4 {
+  color: #111827 !important;
+}
+
+.light [class*="bg-gray-900"] .text-white:not(button):not(button *):not(a.bg-black):not(a.bg-black *):not(.btn-primary):not(.btn-primary *):not([class*="bg-black"]):not([class*="bg-black"] *):not([class*="bg-neutral-900"]):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"]):not([class*="bg-neutral-950"] *):not(.badge-dark),
+.light [class*="bg-gray-950"] .text-white:not(button):not(button *):not(a.bg-black):not(a.bg-black *):not(.btn-primary):not(.btn-primary *):not([class*="bg-black"]):not([class*="bg-black"] *):not([class*="bg-neutral-900"]):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"]):not([class*="bg-neutral-950"] *):not(.badge-dark) {
+  color: #111827 !important;
+}
+
+.light .bg-gray-900 label,
+[data-mode="light"] .bg-gray-900 label,
+.light .bg-gray-950 label,
+[data-mode="light"] .bg-gray-950 label {
+  color: #374151 !important;
+}
+
+/* Light mode muted text - only applies when NOT inside a dark background box, pill or badge */
+.light .text-gray-400:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *),
+[data-mode="light"] .text-gray-400:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *) {
+  color: #4b5563 !important;
+}
+
+.light .text-gray-300:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *),
+[data-mode="light"] .text-gray-300:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *) {
+  color: #374151 !important;
+}
+
+.light .text-gray-500:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *),
+[data-mode="light"] .text-gray-500:not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not([class*="bg-neutral-800"] *):not([class*="bg-neutral-900"] *):not([class*="bg-neutral-950"] *):not(.badge-dark *):not([class*="backdrop-blur"] *) {
+  color: #6b7280 !important;
+}
+
+/* ==========================================================================
+   HIGH-CONTRAST TEXT FOR DARK PILLS, BADGES & OVERLAYS IN LIGHT MODE
+   Ensures that whenever a pill, badge, button, or photo overlay has a dark background,
+   its text and icons ALWAYS render in crisp, readable, high-contrast light colors
+   (#ffffff, #f3f4f6, #fbbf24 for accents), never invisible dark-on-dark.
+   ========================================================================== */
+
+.light [class*="bg-gray-800"] .text-gray-300,
+[data-mode="light"] [class*="bg-gray-800"] .text-gray-300,
+.light [class*="bg-gray-800"] .text-gray-400,
+[data-mode="light"] [class*="bg-gray-800"] .text-gray-400,
+.light [class*="bg-gray-800"] .text-gray-500,
+[data-mode="light"] [class*="bg-gray-800"] .text-gray-500,
+.light [class*="bg-black"] .text-gray-300,
+[data-mode="light"] [class*="bg-black"] .text-gray-300,
+.light [class*="bg-black"] .text-gray-400,
+[data-mode="light"] [class*="bg-black"] .text-gray-400,
+.light [class*="bg-black"] .text-gray-500,
+[data-mode="light"] [class*="bg-black"] .text-gray-500 {
+  color: #e5e7eb !important;
+}
+
+.light [class*="bg-gray-800"] .text-accent,
+[data-mode="light"] [class*="bg-gray-800"] .text-accent,
+.light [class*="bg-black"] .text-accent,
+[data-mode="light"] [class*="bg-black"] .text-accent {
+  color: #fbbf24 !important;
+}
+
+/* Light Mode: Ensure secondary text inside converted light cards (bg-gray-900 / bg-gray-950) is dark & legible */
+.light [class*="bg-gray-900"] .text-gray-200:not(button):not(button *):not([class*="bg-black"] *):not(.badge-dark),
+.light [class*="bg-gray-950"] .text-gray-200:not(button):not(button *):not([class*="bg-black"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-900"] .text-gray-200:not(button):not(button *):not([class*="bg-black"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-950"] .text-gray-200:not(button):not(button *):not([class*="bg-black"] *):not(.badge-dark) {
+  color: #111827 !important;
+}
+
+.light [class*="bg-gray-900"] .text-gray-300:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+.light [class*="bg-gray-950"] .text-gray-300:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-900"] .text-gray-300:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-950"] .text-gray-300:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark) {
+  color: #374151 !important;
+}
+
+.light [class*="bg-gray-900"] .text-gray-400:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+.light [class*="bg-gray-950"] .text-gray-400:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-900"] .text-gray-400:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-950"] .text-gray-400:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark) {
+  color: #4b5563 !important;
+}
+
+.light [class*="bg-gray-900"] .text-gray-500:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+.light [class*="bg-gray-950"] .text-gray-500:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-900"] .text-gray-500:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark),
+[data-mode="light"] [class*="bg-gray-950"] .text-gray-500:not(button):not(button *):not([class*="bg-black"] *):not([class*="bg-gray-800"] *):not(.badge-dark) {
+  color: #6b7280 !important;
+}
+
+/* Admin Table Readability & Smooth Transitions in Both Modes */
+.light table,
+[data-mode="light"] table {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+.light thead,
+[data-mode="light"] thead,
+.light th,
+[data-mode="light"] th {
+  background-color: #f9fafb !important;
+  color: #4b5563 !important;
+  border-color: #e5e7eb !important;
+}
+
+table tbody tr {
+  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+table tbody td {
+  transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light td,
+[data-mode="light"] td {
+  border-color: #f3f4f6 !important;
+  color: #1f2937;
+}
+
+.light tr:hover td,
+[data-mode="light"] tr:hover td,
+.light tbody tr:hover td,
+[data-mode="light"] tbody tr:hover td {
+  background-color: #f3f4f6 !important;
+}
+
+.dark tbody tr:hover td,
+[data-mode="dark"] tbody tr:hover td {
+  background-color: rgba(38, 38, 38, 0.5) !important;
+}
+
+/* Admin Input Fields in Light Mode */
+.light input:not([type="checkbox"]):not([type="radio"]),
+[data-mode="light"] input:not([type="checkbox"]):not([type="radio"]),
+.light textarea,
+[data-mode="light"] textarea,
+.light select,
+[data-mode="light"] select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+.light input::placeholder,
+[data-mode="light"] input::placeholder,
+.light textarea::placeholder,
+[data-mode="light"] textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.light input:focus,
+[data-mode="light"] input:focus,
+.light textarea:focus,
+[data-mode="light"] textarea:focus,
+.light select:focus,
+[data-mode="light"] select:focus {
+  border-color: #111827 !important;
+}
+
+/* Modals & Dialogs in Light Mode */
+.light [role="dialog"],
+[data-mode="light"] [role="dialog"] {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #111827;
+}
+
+.light [role="dialog"] .bg-gray-900,
+[data-mode="light"] [role="dialog"] .bg-gray-900 {
+  background-color: #ffffff !important;
+}
+
+.light [role="dialog"] h2,
+[data-mode="light"] [role="dialog"] h2,
+.light [role="dialog"] h3,
+[data-mode="light"] [role="dialog"] h3,
+.light [role="dialog"] h4,
+[data-mode="light"] [role="dialog"] h4 {
+  color: #111827 !important;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Luxury Popup & Scrollbar Utilities */
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+  padding: 0.25rem !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+.leaflet-container {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 2px;
+}

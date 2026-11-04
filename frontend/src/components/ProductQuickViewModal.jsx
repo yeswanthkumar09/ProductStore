@@ -272,7 +272,7 @@ const ProductQuickViewModal = ({ isOpen, onClose, product, initialColor = null }
 						{/* Category & Wishlist */}
 						<div className='flex items-center justify-between mb-1'>
 							<span className='text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400'>
-								{product.category || "Couture"}
+								{typeof product.category === "string" ? product.category : product.category?.name || "Couture"}
 							</span>
 							<button
 								type='button'

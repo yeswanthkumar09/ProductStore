@@ -75,7 +75,9 @@ const PurchaseSuccessPage = () => {
 						<CheckCircle size={28} className='rotate-45' />
 					</div>
 					<h3 className='text-lg font-bold text-white mb-2 font-heading'>Order Notice</h3>
-					<p className='text-xs text-rose-300 mb-6 leading-relaxed'>{error}</p>
+					<p className='text-xs text-rose-300 mb-6 leading-relaxed'>
+						{typeof error === "object" ? error?.message || "Order notice." : String(error)}
+					</p>
 					<div className='flex gap-2 justify-center'>
 						<Link
 							to='/orders'

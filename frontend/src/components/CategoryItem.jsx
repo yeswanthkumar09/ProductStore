@@ -15,7 +15,7 @@ const CategoryItem = ({ category }) => {
 			className='group flex flex-col items-center justify-between p-3 sm:p-4 rounded-sm bg-transparent hover:bg-neutral-50 dark:hover:bg-neutral-900/40 transition-all select-none'
 		>
 			<h4 className='text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-900 dark:text-neutral-100 mb-4 group-hover:opacity-75 transition-opacity text-center'>
-				{category.name}
+				{typeof category?.name === "string" ? category.name : category?.slug || "Category"}
 			</h4>
 			<div className='w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 flex items-center justify-center overflow-hidden'>
 				<img

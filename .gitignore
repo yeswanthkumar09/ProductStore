@@ -11,12 +11,15 @@ node_modules
 dist
 dist-ssr
 *.local
+.vite/
+frontend/.vite/
 
 .env
 .env*.local
 
 # Local databases and runtime data
 scratch/
+scratch/db/
 scratch_prompt.json
 *.sqlite
 

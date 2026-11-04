@@ -424,10 +424,10 @@ const ProductDetailPage = () => {
 						</Link>
 						<span>/</span>
 						<Link
-							to={`/category/${currentProduct.category}`}
+							to={`/category/${typeof currentProduct.category === "string" ? currentProduct.category : currentProduct.category?.slug || ""}`}
 							className='hover:text-black dark:hover:text-white transition-colors'
 						>
-							{currentProduct.category}
+							{typeof currentProduct.category === "string" ? currentProduct.category : currentProduct.category?.name || "Collection"}
 						</Link>
 						<span>/</span>
 						<span className='text-neutral-900 dark:text-white truncate max-w-[200px] sm:max-w-xs'>

@@ -137,7 +137,7 @@ const ProductCard = ({ product }) => {
 								{discountPercent}% OFF
 							</span>
 						)}
-						{product.badge ? (
+						{typeof product.badge === "string" && product.badge ? (
 							<span className='px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider bg-[#6e141a] text-white shadow-sm'>
 								{product.badge}
 							</span>
@@ -213,7 +213,7 @@ const ProductCard = ({ product }) => {
 													: "border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:border-black dark:hover:border-white"
 											}`}
 										>
-											{v.size}
+											{typeof v.size === "string" || typeof v.size === "number" ? v.size : "OS"}
 										</button>
 									);
 								})}
@@ -230,7 +230,7 @@ const ProductCard = ({ product }) => {
 							to={`/product/${product._id}`}
 							className='flex-1 text-xs sm:text-[13px] font-normal text-neutral-800 dark:text-neutral-200 hover:underline line-clamp-1 leading-snug'
 						>
-							{product.name}
+							{typeof product.name === "string" ? product.name : product.name?.name || "Exclusive Piece"}
 						</Link>
 
 						{/* Quick-Add '+' Button */}

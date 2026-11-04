@@ -108,7 +108,7 @@ const Navbar = () => {
 			{ name: "ALL", path: "/category/all" },
 			{ name: "SHOP ALL", path: "/search" },
 			...activeCats.slice(0, third).map((c) => ({
-				name: c.name.toUpperCase(),
+				name: (typeof c.name === "string" ? c.name : c.slug || "").toUpperCase(),
 				path: `/category/${c.slug}`,
 			})),
 			{ name: "LINEN EDIT", path: "/search?q=linen" },
@@ -117,7 +117,7 @@ const Navbar = () => {
 		const col2 = [
 			{ name: "BESTSELLERS", path: "/search?sort=popular" },
 			...activeCats.slice(third, 2 * third).map((c) => ({
-				name: c.name.toUpperCase(),
+				name: (typeof c.name === "string" ? c.name : c.slug || "").toUpperCase(),
 				path: `/category/${c.slug}`,
 			})),
 			{ name: "FESTIVE EDIT", path: "/search?q=festive" },
@@ -127,7 +127,7 @@ const Navbar = () => {
 		const col3 = [
 			{ name: "NEW ARRIVALS", path: "/search?sort=newest" },
 			...activeCats.slice(2 * third).map((c) => ({
-				name: c.name.toUpperCase(),
+				name: (typeof c.name === "string" ? c.name : c.slug || "").toUpperCase(),
 				path: `/category/${c.slug}`,
 			})),
 			{ name: "PRICE DROP", path: "/sales", isPriceDrop: true },
@@ -603,7 +603,7 @@ const Navbar = () => {
 															<span className='font-bold text-neutral-950 dark:text-white'>
 																₹{Number(item.price).toLocaleString("en-IN")}
 															</span>
-															<span className='capitalize'>• {item.category}</span>
+															<span className='capitalize'>• {typeof item.category === "string" ? item.category : item.category?.name || ""}</span>
 															{item.stock <= 3 && item.stock > 0 && (
 																<span className='text-rose-500 font-bold text-[10px]'>
 																	• Only {item.stock} left

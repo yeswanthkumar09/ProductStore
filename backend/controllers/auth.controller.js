@@ -33,16 +33,17 @@ const storeRefreshToken = async (userId, refreshToken) => {
 };
 
 const setCookies = (res, accessToken, refreshToken) => {
+	const isProd = process.env.NODE_ENV === "production";
 	res.cookie("accessToken", accessToken, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+		secure: isProd,
+		sameSite: isProd ? "none" : "lax",
 		maxAge: 15 * 60 * 1000, // 15 mins
 	});
 	res.cookie("refreshToken", refreshToken, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+		secure: isProd,
+		sameSite: isProd ? "none" : "lax",
 		maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 	});
 };
@@ -503,8 +504,14 @@ export const logout = async (req, res) => {
 			} catch (err) {}
 		}
 
-		res.clearCookie("accessToken");
-		res.clearCookie("refreshToken");
+		const isProd = process.env.NODE_ENV === "production";
+		const clearOptions = {
+			httpOnly: true,
+			secure: isProd,
+			sameSite: isProd ? "none" : "lax",
+		};
+		res.clearCookie("accessToken", clearOptions);
+		res.clearCookie("refreshToken", clearOptions);
 		res.json({ message: "Logged out successfully" });
 	} catch (error) {
 		console.error("Error in logout controller", error.message);
@@ -537,10 +544,11 @@ export const refreshToken = async (req, res) => {
 			expiresIn: "15m",
 		});
 
+		const isProd = process.env.NODE_ENV === "production";
 		res.cookie("accessToken", accessToken, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
+			secure: isProd,
+			sameSite: isProd ? "none" : "lax",
 			maxAge: 15 * 60 * 1000,
 		});
 

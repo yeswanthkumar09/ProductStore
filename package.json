@@ -6,7 +6,12 @@
 	"scripts": {
 		"dev": "nodemon backend/server.js",
 		"start": "node backend/server.js",
-		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+		"build": "echo 'Backend deployment ready'",
+		"build:all": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+		"build:frontend": "npm run build --prefix frontend",
+		"bootstrap": "node backend/scripts/bootstrap_owner.js && node backend/scripts/bootstrap_database.js",
+		"bootstrap:owner": "node backend/scripts/bootstrap_owner.js",
+		"bootstrap:db": "node backend/scripts/bootstrap_database.js"
 	},
 	"keywords": [],
 	"author": "",

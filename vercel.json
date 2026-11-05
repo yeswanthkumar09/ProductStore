@@ -1,0 +1,23 @@
+{
+	"version": 2,
+	"functions": {
+		"api/**/*.js": {
+			"memory": 1024,
+			"maxDuration": 15
+		}
+	},
+	"rewrites": [
+		{
+			"source": "/api/(.*)",
+			"destination": "/api"
+		},
+		{
+			"source": "/health",
+			"destination": "/api"
+		},
+		{
+			"source": "/",
+			"destination": "/api"
+		}
+	]
+}

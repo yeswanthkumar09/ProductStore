@@ -1,7 +1,14 @@
 import axios from "axios";
 
+// Resolves API base URL: Supports separate Vercel project deployment via VITE_API_URL
+// Falls back to local/monorepo relative '/api'
+const rawApiUrl = (typeof import.meta !== "undefined" && import.meta?.env)
+	? import.meta.env.VITE_API_URL
+	: (typeof process !== "undefined" && process?.env ? process.env.VITE_API_URL : null);
+const baseURL = rawApiUrl ? `${rawApiUrl.replace(/\/+$/, "")}/api` : "/api";
+
 const axiosInstance = axios.create({
-	baseURL: "/api",
+	baseURL,
 	withCredentials: true, // send cookies to the server
 });
 

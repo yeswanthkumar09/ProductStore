@@ -439,14 +439,17 @@ const defaultSizeTemplates = [
 	},
 ];
 
-// Helper: Seed defaults if table is empty
+// Helper: Seed defaults if table is empty (cached in-memory for serverless performance)
+let isSizeChartsEnsured = false;
 export const ensureDefaultSizeCharts = async () => {
+	if (isSizeChartsEnsured) return;
 	try {
 		const count = await SizeChart.countDocuments();
 		if (count === 0) {
 			await SizeChart.insertMany(defaultSizeTemplates);
 			console.log("[SIZE CHARTS] Initialized 6 category size guides.");
 		}
+		isSizeChartsEnsured = true;
 	} catch (e) {
 		console.warn("[SIZE CHARTS SEED NOTE]", e.message);
 	}

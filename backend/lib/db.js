@@ -40,27 +40,82 @@ const DEFAULT_CATEGORY_COLORS = {
 	],
 };
 
+// Serverless Mongoose connection caching to prevent connection exhaustion
+let cached = global.mongooseConnection;
+if (!cached) {
+	cached = global.mongooseConnection = { conn: null, promise: null };
+}
+
 export const connectDB = async () => {
-	let conn;
-	try {
-		conn = await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 2500 });
-		console.log(`MongoDB connected: ${conn.connection.host}`);
-	} catch (atlasErr) {
-		console.warn(`[MONGODB ATLAS NOTICE] Atlas connection unavailable (IP 117.251.86.149 not whitelisted in Atlas Network Access).`);
-		console.log(`[MONGODB FALLBACK] Connecting to local MongoDB server on 127.0.0.1:27017...`);
-		try {
-			conn = await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce", { serverSelectionTimeoutMS: 2000 });
-			console.log(`MongoDB connected to local instance: ${conn.connection.host}`);
-		} catch (localErr) {
-			console.error("[MONGODB ERROR] Both Atlas and local MongoDB failed:", localErr.message);
-			console.log("[RETRY] Retrying database connection in 10 seconds...");
-			setTimeout(connectDB, 10000);
-			return;
-		}
+	// 1. Return existing active connection immediately
+	if (mongoose.connection.readyState === 1) {
+		cached.conn = mongoose.connection;
+		return cached.conn;
+	}
+
+	if (cached.conn && cached.conn.readyState === 1) {
+		return cached.conn;
+	}
+
+	// 2. Connect if no connection promise is in-flight
+	if (!cached.promise) {
+		const opts = {
+			serverSelectionTimeoutMS: 5000,
+			maxPoolSize: 10,
+		};
+
+		cached.promise = (async () => {
+			const mongoUri = process.env.MONGO_URI;
+			try {
+				if (mongoUri) {
+					await mongoose.connect(mongoUri, opts);
+					console.log(`[MONGODB] Connected to Atlas: ${mongoose.connection.host}`);
+					return mongoose.connection;
+				}
+				throw new Error("MONGO_URI not specified in environment");
+			} catch (atlasErr) {
+				console.warn(`[MONGODB ATLAS NOTICE] Atlas connection unavailable: ${atlasErr.message}`);
+				if (process.env.NODE_ENV !== "production") {
+					console.log(`[MONGODB FALLBACK] Connecting to local MongoDB server on 127.0.0.1:27017...`);
+					try {
+						await mongoose.connect("mongodb://127.0.0.1:27017/ecommerce", {
+							serverSelectionTimeoutMS: 2000,
+							maxPoolSize: 10,
+						});
+						console.log(`[MONGODB] Connected to local instance: ${mongoose.connection.host}`);
+						return mongoose.connection;
+					} catch (localErr) {
+						console.error("[MONGODB ERROR] Both Atlas and local MongoDB failed:", localErr.message);
+						cached.promise = null;
+						throw localErr;
+					}
+				}
+				cached.promise = null;
+				throw atlasErr;
+			}
+		})();
 	}
 
 	try {
-		// Single-Owner Architecture Enforcement
+		cached.conn = await cached.promise;
+		return cached.conn;
+	} catch (e) {
+		cached.promise = null;
+		throw e;
+	}
+};
+
+// Cached idempotent database initialization for categories, store locations, and owner
+let isDefaultsEnsured = false;
+let defaultsPromise = null;
+
+export const ensureDatabaseDefaults = async () => {
+	if (isDefaultsEnsured) return;
+	if (defaultsPromise) return defaultsPromise;
+
+	defaultsPromise = (async () => {
+		try {
+			// Single-Owner Architecture Enforcement
 		const User = (await import("../models/user.model.js")).default;
 		const ownerEmail = (process.env.OWNER_EMAIL || "yeswanthagathamudi@gmail.com").trim().toLowerCase();
 
@@ -176,8 +231,8 @@ export const connectDB = async () => {
 		}
 
 		// Ensure sample products exist if collection is empty
-		let productsToUpdate = await Product.find({});
-		if (productsToUpdate.length === 0) {
+		const productCount = await Product.countDocuments();
+		if (productCount === 0) {
 			const initialProducts = [
 				{
 					name: "Vintage Straight-Leg Selvedge Denim",
@@ -272,13 +327,9 @@ export const connectDB = async () => {
 				},
 			];
 			await Product.insertMany(initialProducts);
-			productsToUpdate = await Product.find({});
+			const productsToUpdate = await Product.find({});
 			console.log(`[INIT] Seeded initial luxury product catalog with ${productsToUpdate.length} items.`);
-		}
 
-		// Automatically enhance existing products with INR prices, multi-photos, variants, and new arrivals
-
-		if (productsToUpdate.length > 0) {
 			let updatedCount = 0;
 			for (let i = 0; i < productsToUpdate.length; i++) {
 				const prod = productsToUpdate[i];
@@ -418,7 +469,7 @@ export const connectDB = async () => {
 
 		// Drop legacy unique index on userId if present
 		try {
-			await conn.connection.collection("coupons").dropIndex("userId_1");
+			await mongoose.connection.collection("coupons").dropIndex("userId_1");
 			console.log("Dropped legacy coupons.userId_1 unique index");
 		} catch (e) {
 			// Index already dropped or does not exist
@@ -598,11 +649,12 @@ export const connectDB = async () => {
 			console.log("Initialized default approved serviceable delivery locations");
 		}
 
+		isDefaultsEnsured = true;
 	} catch (error) {
-		console.error("[MONGODB ATLAS ERROR] Could not connect to database:", error.message);
-		console.warn("[MONGODB IP NOTICE] Your current public IP address is: 117.251.86.149");
-		console.warn("[ACTION REQUIRED] Go to MongoDB Atlas (https://cloud.mongodb.com) -> Network Access -> Add IP Address -> Add '117.251.86.149' or '0.0.0.0/0' (Allow Access From Anywhere).");
-		console.log("[RETRY] Retrying MongoDB Atlas connection in 10 seconds...");
-		setTimeout(connectDB, 10000);
+		console.warn("[INIT WARNING] Database defaults initialization encountered note:", error.message);
+		defaultsPromise = null;
 	}
+	})();
+
+	return defaultsPromise;
 };
